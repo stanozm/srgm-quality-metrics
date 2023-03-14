@@ -3,10 +3,9 @@ import sys
 from github import Github
 
 # Add your Github access token here
-TOKEN = "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"
 GITHUB_URL_PREFIX = "https://github.com/"
 
-github = Github(TOKEN)
+github = Github()
 
 
 def parse_repo_urls(path_to_url_file):
