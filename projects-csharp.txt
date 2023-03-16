@@ -1,0 +1,8 @@
+jenkinsci/jenkins
+cassandre-tech/cassandre-trading-bot
+dbeaver/dbeaver
+SceneView/sceneform-android
+mockito/mockito
+oshi/oshi
+JabRef/jabref
+vert-x3/vertx-web

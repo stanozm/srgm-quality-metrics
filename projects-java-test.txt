@@ -1,1 +1,1 @@
-SceneView/sceneform-android
+SonarSource/sonar-scanner-maven
