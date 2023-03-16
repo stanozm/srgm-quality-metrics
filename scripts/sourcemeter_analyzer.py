@@ -7,7 +7,7 @@ import git
 
 JAVA_PROJECTS_LIST_FILE = 'projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = ''
-CSHARP_PROJRCTS_LIST_FILE = ''
+CSHARP_PROJECTS_LIST_FILE = ''
 
 
 SOURCEMETER_PATH = "/u/23/chrens1/unix/SourceMeter"
@@ -100,7 +100,7 @@ def analyze_projects(lang):
     if lang=='python':
         repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
     if lang=='csharp':
-        repo_names = parse_repo_names(CSHARP_PROJRCTS_LIST_FILE)
+        repo_names = parse_repo_names(CSHARP_PROJECTS_LIST_FILE)
 
     for repo_name in repo_names:
         print('Processing repo: ' + repo_name)
