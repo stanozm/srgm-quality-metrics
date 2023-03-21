@@ -1,0 +1,7 @@
+AppMetrics,Core/AppMetrics.sln
+Binance.Net,.
+efcore,All.sln
+nunit,.
+PowerShell,.
+SmartFormat,src/.
+server,bitwarden-server.sln

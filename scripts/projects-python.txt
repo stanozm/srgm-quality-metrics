@@ -1,8 +1,8 @@
-jenkinsci/jenkins
-cassandre-tech/cassandre-trading-bot
-dbeaver/dbeaver
-SceneView/sceneform-android
-mockito/mockito
-oshi/oshi
-JabRef/jabref
-vert-x3/vertx-web
+home-assistant/core
+freqtrade/freqtrade
+dbcli/pgcli
+pyvista/pyvista
+localstack/localstack
+qilingframework/qiling
+WeblateOrg/weblate
+Cog-Creators/Red-DiscordBot

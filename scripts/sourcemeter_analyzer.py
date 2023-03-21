@@ -2,12 +2,13 @@ import os
 import sys
 import subprocess as sp, shlex
 from github import Github
+import csv
 
 import git
 
 JAVA_PROJECTS_LIST_FILE = 'projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = ''
-CSHARP_PROJECTS_LIST_FILE = ''
+CSHARP_PROJECTS_LIST_FILE = 'projects-csharp-test.txt'
 
 
 SOURCEMETER_PATH = "/u/23/chrens1/unix/SourceMeter"
@@ -20,22 +21,60 @@ SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runMetricHunter=false" \
                      " -runMET=false"
 
-SOURCEMETER_PYTHON_PARAMS = ''
+SOURCEMETER_PYTHON_PARAMS = " -runFB=false" \
+                     " -runAndroidHunter=false" \
+                     " -runVulnerabilityHunter=false" \
+                     " -runFaultHunter=false" \
+                     " -runRTEHunter=false" \
+                     " -runDCF=false" \
+                     " -runMetricHunter=false" \
+                     " -runMET=false"
 
-SOURCEMETER_CSHARP_PARAMS = ''
+SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
+                     " -platform=AnyCPU" \
+                     " -runDCF=false" \
+                     " -runMetricHunter=false" \
+                     " -runLIM2Patterns=false" \
+                     " -runUDM=false" \
+                     " -runFxCop=false"
+
 
 
 PROJECTS_DIR =  "/u/23/chrens1/unix/SourceMeter/ESEM/projects"
+
+CSHARP_PROJECTS_SLN_PATHS = 'projects-csharp-sln-paths.txt'
+
 
 
 
 github = Github()
 
 
+def parse_csharp_slns_to_dict(filename):
+    dict = {}
+    with open(filename, mode='r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            dict[row[0]] = row[1]
+    return dict
+
+CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
+
 def parse_repo_names(path_to_repos_file):
     with open(path_to_repos_file) as inputFile:
         repos_list = inputFile.read().splitlines()
     return repos_list
+
+def find_file_with_extension(folder_path, extension):
+    relative_file_paths = []
+
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith(extension):
+                relative_file_path = os.path.relpath(os.path.join(root, file), folder_path)
+                relative_file_paths.append(relative_file_path)
+
+    return relative_file_paths
 
 
 def get_repo(repo_name):
@@ -86,27 +125,30 @@ def get_python_command(project_name, project_dir, project_release):
 
 
 def get_csharp_command(project_name, project_dir, project_release):
+    sln_path = CSHARP_SLN_DICTS[project_name]
+
+    sln_files = find_file_with_extension(f"{project_dir}/{sln_path}", '.sln')
+    print('Found sln files:' + str(sln_files))
+    chosen_file = sln_files[0]
+
+
     command = f"{SOURCEMETER_PATH}/CSharp/SourceMeterCSharp " \
+              + f"-input={project_dir}/{chosen_file} " \
               + f"-resultsDir={PROJECTS_DIR}/../Results/CSharp " \
               + f"-projectName={project_name} " \
               + f"-currentDate={project_release} " \
-              + f"-projectBaseDir={project_dir} " + SOURCEMETER_CSHARP_PARAMS
+              + SOURCEMETER_CSHARP_PARAMS
     return command
 
 def analyze_projects(lang):
-    repo_names = []
-    if lang=='java':
-        repo_names = parse_repo_names(JAVA_PROJECTS_LIST_FILE)
-    if lang=='python':
-        repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
-    if lang=='csharp':
-        repo_names = parse_repo_names(CSHARP_PROJECTS_LIST_FILE)
+    repo_names = parse_repo_names_lang(lang)
 
     for repo_name in repo_names:
         print('Processing repo: ' + repo_name)
         repo = get_repo(repo_name)
         cloned_repo = clone_repo(repo)
         releases = get_repo_releases(repo)
+
         for rel in releases:
             print(f"Processing Release: {rel.tag_name}")
             cloned_repo_tag_ref = cloned_repo.tags[rel.tag_name].commit
@@ -116,9 +158,18 @@ def analyze_projects(lang):
             print('-' * 20)
 
 
+def parse_repo_names_lang(lang):
+    if lang == 'java':
+        repo_names = parse_repo_names(JAVA_PROJECTS_LIST_FILE)
+    if lang == 'python':
+        repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
+    if lang == 'csharp':
+        repo_names = parse_repo_names(CSHARP_PROJECTS_LIST_FILE)
+    return repo_names
+
 
 if __name__ == '__main__':
-    analyze_projects('java')
+    #analyze_projects('java')
     #analyze_projects('python')
-    #analyze_projects('csharp')
+    analyze_projects('csharp')
 
