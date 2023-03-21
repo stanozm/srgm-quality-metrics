@@ -7,7 +7,7 @@ import csv
 import git
 
 JAVA_PROJECTS_LIST_FILE = 'projects-java-test.txt'
-PYTHON_PROJECTS_LIST_FILE = ''
+PYTHON_PROJECTS_LIST_FILE = 'projects-python-test.txt'
 CSHARP_PROJECTS_LIST_FILE = 'projects-csharp-test.txt'
 
 
@@ -19,16 +19,17 @@ SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runRTEHunter=false" \
                      " -runDCF=false" \
                      " -runMetricHunter=false" \
-                     " -runMET=false"
+                     " -runMET=true"
 
-SOURCEMETER_PYTHON_PARAMS = " -runFB=false" \
-                     " -runAndroidHunter=false" \
-                     " -runVulnerabilityHunter=false" \
-                     " -runFaultHunter=false" \
-                     " -runRTEHunter=false" \
+SOURCEMETER_PYTHON_PARAMS = " -runFaultHunter=false" \
                      " -runDCF=false" \
                      " -runMetricHunter=false" \
-                     " -runMET=false"
+                     " -runMET=true" \
+                     " -runUDM=false" \
+                     " -pythonBinary=python3.9" \
+                     " -pythonVersion=3" \
+                     " -runPylint=false" \
+                     " -runLIM2Patterns=false"
 
 SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
                      " -platform=AnyCPU" \
@@ -58,7 +59,8 @@ def parse_csharp_slns_to_dict(filename):
             dict[row[0]] = row[1]
     return dict
 
-CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
+CSHARP_SLN_DICTS = {}
+#CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
 
 def parse_repo_names(path_to_repos_file):
     with open(path_to_repos_file) as inputFile:
@@ -101,8 +103,8 @@ def execute_sourcemeter(project_name, project_dir, project_release,lang):
 def get_language_command(project_name, project_dir, project_release, lang):
     switch ={
         'java': get_java_command(project_name,project_dir,project_release),
-        'python': get_python_command(project_name,project_dir,project_release),
-        'csharp': get_csharp_command(project_name,project_dir,project_release)
+        'python': get_python_command(project_name,project_dir,project_release)
+       # 'csharp': get_csharp_command(project_name,project_dir,project_release)
     }
     return switch.get(lang, 'Invalid language parameter')
 
@@ -169,7 +171,9 @@ def parse_repo_names_lang(lang):
 
 
 if __name__ == '__main__':
-    #analyze_projects('java')
-    #analyze_projects('python')
-    analyze_projects('csharp')
+    analyze_projects('python')
+
+    # analyze_projects('java')
+
+    # analyze_projects('csharp')
 
