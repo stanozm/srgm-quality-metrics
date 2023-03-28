@@ -19,7 +19,11 @@ SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runRTEHunter=false" \
                      " -runDCF=false" \
                      " -runMetricHunter=false" \
-                     " -runMET=true"
+                     " -runMET=true" \
+                     " -runPMD=false" \
+                     " -runLIM2Patterns=false" \
+                     " -runUDM=false"
+
 
 SOURCEMETER_PYTHON_PARAMS = " -runFaultHunter=false" \
                      " -runDCF=false" \
@@ -157,7 +161,7 @@ def analyze_projects(lang):
         for rel in releases:
             print(f"Processing Release: {rel.tag_name}")
             cloned_repo_tag_ref = cloned_repo.tags[rel.tag_name].commit
-            cloned_repo.git.checkout(cloned_repo_tag_ref)
+            cloned_repo.git.checkout(cloned_repo_tag_ref, force=True)
             repo_dir = cloned_repo.working_dir
             execute_sourcemeter(repo_name.split("/")[1],repo_dir,rel.tag_name, lang)
             print('-' * 20)
