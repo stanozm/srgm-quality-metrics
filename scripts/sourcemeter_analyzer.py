@@ -60,7 +60,7 @@ def parse_csharp_slns_to_dict(filename):
     return dict
 
 CSHARP_SLN_DICTS = {}
-#CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
+CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
 
 def parse_repo_names(path_to_repos_file):
     with open(path_to_repos_file) as inputFile:
@@ -101,12 +101,15 @@ def execute_sourcemeter(project_name, project_dir, project_release,lang):
 
 
 def get_language_command(project_name, project_dir, project_release, lang):
-    switch ={
-        'java': get_java_command(project_name,project_dir,project_release),
-        'python': get_python_command(project_name,project_dir,project_release)
-       # 'csharp': get_csharp_command(project_name,project_dir,project_release)
-    }
-    return switch.get(lang, 'Invalid language parameter')
+    command =''
+    if lang == 'java':
+        command = get_java_command(project_name,project_dir,project_release)
+    if lang == 'python':
+        command = get_python_command(project_name,project_dir,project_release)
+    if lang == 'csharp':
+        command = get_csharp_command(project_name, project_dir, project_release)
+
+    return command
 
 def get_java_command(project_name, project_dir, project_release):
      command = f"{SOURCEMETER_PATH}/Java/SourceMeterJava " \
