@@ -140,6 +140,8 @@ def get_csharp_command(project_name, project_dir, project_release):
     print('Found sln files:' + str(sln_files))
     chosen_file = sln_files[0]
 
+    print(f'Compiling at:{project_dir}/{chosen_file}')
+    os.system(f'dotnet build {project_dir}/{sln_path}/{chosen_file}')
 
     command = f"{SOURCEMETER_PATH}/CSharp/SourceMeterCSharp " \
               + f"-input={project_dir}/{chosen_file} " \
@@ -178,9 +180,10 @@ def parse_repo_names_lang(lang):
 
 
 if __name__ == '__main__':
-    analyze_projects('python')
+    #analyze_projects('python')
 
+ ##
     # analyze_projects('java')
 
-    # analyze_projects('csharp')
+     analyze_projects('csharp')
 
