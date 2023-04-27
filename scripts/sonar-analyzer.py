@@ -117,8 +117,9 @@ def clone_repo(github_repo):
 def execute_sonar(project_name, project_dir, project_release,lang):
     command = get_language_command(project_name, project_dir, project_release, lang)
     print('Executing command: ' + command)
-    os.system(f'cd {project_dir}')
-    os.system(command)
+    #os.system(f'cd {project_dir}')
+    change_folder = f'cd {project_dir} && '
+    os.system(change_folder + command)
 
 
 def get_language_command(project_name, project_dir, project_release, lang):
@@ -139,6 +140,7 @@ def get_java_command(project_name, project_dir, project_release):
         command = f'mvn clean verify sonar:sonar \
                     -Dsonar.projectKey={project_name}-{project_release} \
                     -Dsonar.projectBaseDir={project_dir} \
+                    -Dsonar.projectName={project_name}-{project_release} \
                     -Dsonar.host.url={SONAR_URL} \
                     -Dsonar.login={SONAR_TOKEN}'
 
@@ -162,10 +164,10 @@ def get_csharp_command(project_name, project_dir, project_release):
 if __name__ == '__main__':
     JAVA_BUILD_TYPE_DICT = parse_java_build_config_to_dict(JAVA_BUILD_TYPES_FILE)
 
-    analyze_projects('python')
+    #analyze_projects('python')
 
- ##
-    # analyze_projects('java')
+
+    analyze_projects('java')
 
     # analyze_projects('csharp')
 
