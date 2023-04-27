@@ -1,4 +1,4 @@
-AppMetrics,Core/AppMetrics.sln
+AppMetrics,./src/Core
 Binance.Net,.
 efcore,All.sln
 nunit,.

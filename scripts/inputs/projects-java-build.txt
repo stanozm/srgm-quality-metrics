@@ -1,0 +1,9 @@
+jenkins,maven
+cassandre-trading-bot,maven
+dbeaver,maven
+sceneform-android,gradle
+mockito,gradle
+oshi,maven
+jabref,gradle
+swagger-core,gradle
+sonar-scanner-maven,maven

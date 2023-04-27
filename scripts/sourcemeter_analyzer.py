@@ -6,9 +6,9 @@ import csv
 
 import git
 
-JAVA_PROJECTS_LIST_FILE = 'projects-java-test.txt'
-PYTHON_PROJECTS_LIST_FILE = 'projects-python-test.txt'
-CSHARP_PROJECTS_LIST_FILE = 'projects-csharp-test.txt'
+JAVA_PROJECTS_LIST_FILE = 'inputs/projects-java-test.txt'
+PYTHON_PROJECTS_LIST_FILE = 'inputs/projects-python-test.txt'
+CSHARP_PROJECTS_LIST_FILE = 'inputs/projects-csharp-test.txt'
 
 
 SOURCEMETER_PATH = "/u/23/chrens1/unix/SourceMeter"
@@ -47,7 +47,7 @@ SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
 
 PROJECTS_DIR =  "/u/23/chrens1/unix/SourceMeter/ESEM/projects"
 
-CSHARP_PROJECTS_SLN_PATHS = 'projects-csharp-sln-paths.txt'
+CSHARP_PROJECTS_SLN_PATHS = 'inputs/projects-csharp-sln-paths.txt'
 
 
 
