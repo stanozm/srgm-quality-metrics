@@ -16,46 +16,12 @@ SONAR_PLUGIN = 'id "org.sonarqube" version "3.5.0.2730"'
 SONAR_TOKEN = 'squ_2b538bab99a18a124554d34ccc4a97702ffe9ca2'
 SONAR_URL = 'http://localhost:9000'
 
-GRADLE_COMMAND = f'./gradlew sonar \
-  -Dsonar.projectKey=csharp-test \
-  -Dsonar.host.url={SONAR_URL} \
-  -Dsonar.login={SONAR_TOKEN}'
+
 
 github = Github()
 
 
-def check_gradle_path(project_dir):
-    if not os.path.exists(f'{project_dir}/build.gradle'):
-        print(f"build.gradle does not exist in {project_dir}.")
-        return False
-    return True
 
-def add_sonar_plugin_to_gradle(project_dir):
-    if not check_gradle_path():
-        return None
-
-    with open(f'{project_dir}/build.gradle', 'r') as build_file:
-        file_contents = build_file.read()
-
-        if "plugins {" in file_contents:
-
-            start_plugin_pos = file_contents.index("plugins {")
-            end_plugin_pos = file_contents.index("}", start_plugin_pos) + 1
-
-            plugins_section = file_contents[start_plugin_pos:end_plugin_pos]
-
-            if SONAR_PLUGIN in plugins_section:
-                print(f"The plugin entry {SONAR_PLUGIN} already exists in the plugins section.")
-                return None
-
-            updated_plugins_section = plugins_section.replace("}", f"\n\t{SONAR_PLUGIN}\n}}")
-
-            updated_file_contents = file_contents.replace(plugins_section, updated_plugins_section)
-        else:
-            updated_file_contents = file_contents.replace("dependencies {", f"plugins {{\n\t{SONAR_PLUGIN}\n}}\n\ndependencies {{")
-
-    with open(f'{project_dir}/build.gradle', 'w') as build_file:
-        build_file.write(updated_file_contents)
 
 def parse_java_build_config_to_dict(filename):
     dict = {}
@@ -96,8 +62,6 @@ def parse_repo_names_lang(lang):
         repo_names = parse_repo_names(JAVA_PROJECTS_LIST_FILE)
     if lang == 'python':
         repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
-    if lang == 'csharp':
-        repo_names = parse_repo_names(CSHARP_PROJECTS_LIST_FILE)
     return repo_names
 
 def parse_repo_names(path_to_repos_file):
@@ -128,8 +92,6 @@ def get_language_command(project_name, project_dir, project_release, lang):
         command = get_java_command(project_name,project_dir,project_release)
     if lang == 'python':
         command = get_python_command(project_name,project_dir,project_release)
-    if lang == 'csharp':
-        command = get_csharp_command(project_name, project_dir, project_release)
 
     return command
 
@@ -157,8 +119,8 @@ def get_python_command(project_name, project_dir, project_release):
     return command
 
 
-def get_csharp_command(project_name, project_dir, project_release):
-    command = ''
+
+
 
 
 if __name__ == '__main__':
