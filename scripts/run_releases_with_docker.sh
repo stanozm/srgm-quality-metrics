@@ -14,12 +14,22 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+# Replace illegal characters in a filename with an underscore ("_")
+sanitize_filename() {
+  local filename="$1"
+  sanitized=$(echo "$filename" | sed 's/[\/]/_/g' | sed 's/[?*:<>|"]/__/g')
+  echo "$sanitized"
+}
+
 REPO_URL="$1"
 REPO_NAME=$(basename -s .git "$REPO_URL")
-CLONE_DIR="./$REPO_NAME-tmp"
-LOG_FILE="./logs/dockerlog.out"
-OUTPUT_DIR="./output/"
-USERNAME="brossi"
+
+# ---- PARAMS ---------------------------
+CLONE_DIR="./$REPO_NAME-tmp" # Location to clone the git repo
+LOG_FILE="./logs/dockerlog.out" # Location of the log file
+OUTPUT_DIR="./output/" # Location for the output files
+NUM_RELEASES_TO_SKIP=7  # Number of releases to skip at the beginning of history (to avoid too few issues for STRAIT)
+USERNAME="brossi"        # Username to run non sudo commands
 
 # Clone the repository if not already cloned
 if [ -d "$CLONE_DIR" ]; then
@@ -47,10 +57,19 @@ ITERATION=1
 #escaped_project=$(printf '%s' "$PROJECT" | sed 's/[\\/&]/\\&/g')
 
 # Modify batchConfig.json
-sudo -u $USERNAME sed -i.bak -E 's/("location"[[:space:]]*:[[:space:]]*")[^"]*"/\1'"$REPO_URL"'"/' batchConfig.json
+sudo -u $USERNAME jq --arg url "$REPO_URL" '.dataSources[].location=$url' batchConfig.json > batchConfig.json.tmp && mv batchConfig.json.tmp batchConfig.json
+# qc>1.7 supports in-place replacement
+#sudo -u $USERNAME jq -i --arg url  "$REPO_URL" '.dataSources[].location=$url' batchConfig.json
 
 printf 'Number of releases found: %d\n' "${#RELEASES[@]}"
 for RELEASE in "${RELEASES[@]}"; do
+
+  # Skip the first N releases! (likely not many issues)
+  if (( ITERATION <= NUM_RELEASES_TO_SKIP )); then
+      echo "Skipping $RELEASE release from $FIRST_COMMIT_DATE to $TAG_DATE..........."
+      ((ITERATION++))
+      continue
+    fi
 
   TAG=$(echo "$RELEASE" | awk '{print $1}')
   TAG_DATE=$(echo "$RELEASE" | awk '{print $2}')T00:00:00
@@ -62,16 +81,19 @@ for RELEASE in "${RELEASES[@]}"; do
 
   # Run docker compose
   echo "Running docker compose..."
-  docker compose up --abort-on-container-exit --exit-code-from java-app >> "$LOG_FILE" 2>&1
+  docker compose -f ./docker-compose.yml up --abort-on-container-exit --exit-code-from java-app >> "$LOG_FILE" 2>&1
 
   # Copy the output CSV
   VERSION_CSV="batchAnalysisReport-$(printf "%02d" $ITERATION)-$TAG.csv"
+  VERSION_CSV=$(sanitize_filename "$VERSION_CSV")
+  #echo $VERSION_CSV
+
   sudo -u $USERNAME mv batchAnalysisReport.csv "${OUTPUT_DIR}${VERSION_CSV}"
 
   ((ITERATION++))
 
-  echo "Waiting 30 seconds before starting STRAIT container again..."
-  sleep 30
+  echo "Waiting 5 seconds before starting STRAIT container again..."
+  sleep 5
 
 done
 
