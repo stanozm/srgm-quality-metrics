@@ -1,8 +1,3 @@
-home-assistant/core
-freqtrade/freqtrade
-dbcli/pgcli
-pyvista/pyvista
-localstack/localstack
-qilingframework/qiling
-WeblateOrg/weblate
-Cog-Creators/Red-DiscordBot
+httpie/cli
+geekan/MetaGPT
+gpt-engineer-org/gpt-engineer

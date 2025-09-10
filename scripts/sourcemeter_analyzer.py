@@ -8,10 +8,10 @@ import git
 
 JAVA_PROJECTS_LIST_FILE = 'inputs/projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = 'inputs/projects-python-test.txt'
-CSHARP_PROJECTS_LIST_FILE = 'inputs/projects-csharp-test.txt'
 
+SOURCEMETER_PATH = "//u/23/chrens1/unix/utility/sourcemeter/SourceMeter-10.2.0-x64-Linux"
+PROJECTS_DIR =  "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/projects"
 
-SOURCEMETER_PATH = "/u/23/chrens1/unix/SourceMeter"
 SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runAndroidHunter=false" \
                      " -runVulnerabilityHunter=false" \
@@ -45,9 +45,9 @@ SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
 
 
 
-PROJECTS_DIR =  "/u/23/chrens1/unix/SourceMeter/ESEM/projects"
 
-CSHARP_PROJECTS_SLN_PATHS = 'inputs/projects-csharp-sln-paths.txt'
+
+
 
 
 
@@ -63,8 +63,6 @@ def parse_csharp_slns_to_dict(filename):
             dict[row[0]] = row[1]
     return dict
 
-CSHARP_SLN_DICTS = {}
-CSHARP_SLN_DICTS = parse_csharp_slns_to_dict(CSHARP_PROJECTS_SLN_PATHS)
 
 def parse_repo_names(path_to_repos_file):
     with open(path_to_repos_file) as inputFile:
@@ -110,8 +108,7 @@ def get_language_command(project_name, project_dir, project_release, lang):
         command = get_java_command(project_name,project_dir,project_release)
     if lang == 'python':
         command = get_python_command(project_name,project_dir,project_release)
-    if lang == 'csharp':
-        command = get_csharp_command(project_name, project_dir, project_release)
+
 
     return command
 
@@ -125,31 +122,13 @@ def get_java_command(project_name, project_dir, project_release):
 
 
 def get_python_command(project_name, project_dir, project_release):
-    command = f"{SOURCEMETER_PATH}/Python/SourceMeterPython " \
+    command = f"{SOURCEMETER_PATH}/Python/AnalyzerPython " \
               + f"-resultsDir={PROJECTS_DIR}/../Results/Python " \
               + f"-projectName={project_name} " \
               + f"-currentDate={project_release} " \
               + f"-projectBaseDir={project_dir} " + SOURCEMETER_PYTHON_PARAMS
     return command
 
-
-def get_csharp_command(project_name, project_dir, project_release):
-    sln_path = CSHARP_SLN_DICTS[project_name]
-
-    sln_files = find_file_with_extension(f"{project_dir}/{sln_path}", '.sln')
-    print('Found sln files:' + str(sln_files))
-    chosen_file = sln_files[0]
-
-    print(f'Compiling at:{project_dir}/{chosen_file}')
-    os.system(f'dotnet build {project_dir}/{sln_path}/{chosen_file}')
-
-    command = f"{SOURCEMETER_PATH}/CSharp/SourceMeterCSharp " \
-              + f"-input={project_dir}/{chosen_file} " \
-              + f"-resultsDir={PROJECTS_DIR}/../Results/CSharp " \
-              + f"-projectName={project_name} " \
-              + f"-currentDate={project_release} " \
-              + SOURCEMETER_CSHARP_PARAMS
-    return command
 
 def analyze_projects(lang):
     repo_names = parse_repo_names_lang(lang)
@@ -165,7 +144,11 @@ def analyze_projects(lang):
             cloned_repo_tag_ref = cloned_repo.tags[rel.tag_name].commit
             cloned_repo.git.checkout(cloned_repo_tag_ref, force=True)
             repo_dir = cloned_repo.working_dir
-            execute_sourcemeter(repo_name.split("/")[1],repo_dir,rel.tag_name, lang)
+            try:
+                execute_sourcemeter(repo_name.split("/")[1],repo_dir,rel.tag_name, lang)
+            except Exception as e:
+                print(e)
+                continue
             print('-' * 20)
 
 
@@ -174,16 +157,14 @@ def parse_repo_names_lang(lang):
         repo_names = parse_repo_names(JAVA_PROJECTS_LIST_FILE)
     if lang == 'python':
         repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
-    if lang == 'csharp':
-        repo_names = parse_repo_names(CSHARP_PROJECTS_LIST_FILE)
     return repo_names
 
 
 if __name__ == '__main__':
-    #analyze_projects('python')
+    analyze_projects('python')
 
  ##
     # analyze_projects('java')
 
-     analyze_projects('csharp')
+    #analyze_projects('csharp')
 

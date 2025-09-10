@@ -6,7 +6,7 @@ import git
 
 JAVA_PROJECTS_LIST_FILE = 'inputs/projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = 'inputs/projects-python-test.txt'
-CSHARP_PROJECTS_LIST_FILE = 'inputs/projects-csharp-test.txt'
+
 
 PROJECTS_DIR = "/u/23/chrens1/unix/Sonar/ESEM/projects"
 JAVA_BUILD_TYPES_FILE = 'inputs/projects-java-build.txt'
@@ -96,10 +96,9 @@ def get_language_command(project_name, project_dir, project_release, lang):
     return command
 
 def get_java_command(project_name, project_dir, project_release):
-    build_type = JAVA_BUILD_TYPE_DICT[project_name]
 
-    if build_type == 'maven':
-        command = f'mvn clean verify sonar:sonar \
+
+    command = f'mvn clean verify sonar:sonar \
                     -Dsonar.projectKey={project_name}-{project_release} \
                     -Dsonar.projectBaseDir={project_dir} \
                     -Dsonar.projectName={project_name}-{project_release} \
@@ -124,12 +123,12 @@ def get_python_command(project_name, project_dir, project_release):
 
 
 if __name__ == '__main__':
-    JAVA_BUILD_TYPE_DICT = parse_java_build_config_to_dict(JAVA_BUILD_TYPES_FILE)
+    #JAVA_BUILD_TYPE_DICT = parse_java_build_config_to_dict(JAVA_BUILD_TYPES_FILE)
 
-    #analyze_projects('python')
+    analyze_projects('python')
 
 
-    analyze_projects('java')
+    #analyze_projects('java')
 
     # analyze_projects('csharp')
 

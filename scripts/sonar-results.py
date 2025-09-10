@@ -78,7 +78,7 @@ def export_metrics_csv(projects, metrics, output_file="metrics.csv"):
         for project in projects:
             project_key = project["key"]
             project_name = project["name"]
-            measures = fetch_metrics_for_project(project_key, metrics)
+            measures = get_metric_values_for_project(project_key, metrics)
             row = [project_key, project_name] + [measures.get(m, "") for m in metrics]
             writer.writerow(row)
 
