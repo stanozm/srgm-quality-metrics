@@ -8,12 +8,12 @@ JAVA_PROJECTS_LIST_FILE = 'inputs/projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = 'inputs/projects-python-test.txt'
 
 
-PROJECTS_DIR = "/u/23/chrens1/unix/Sonar/ESEM/projects"
+PROJECTS_DIR = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/Sonarqube"
 JAVA_BUILD_TYPES_FILE = 'inputs/projects-java-build.txt'
 JAVA_BUILD_TYPE_DICT = {}
 
 SONAR_PLUGIN = 'id "org.sonarqube" version "3.5.0.2730"'
-SONAR_TOKEN = 'squ_2b538bab99a18a124554d34ccc4a97702ffe9ca2'
+SONAR_TOKEN = 'sqa_fd21d6bd9bf0f60af5e343e06ce59467c4b2f90b'
 SONAR_URL = 'http://localhost:9000'
 
 

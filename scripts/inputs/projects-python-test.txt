@@ -1,1 +1,1 @@
-qilingframework/qiling
+django-oscar/django-oscar
