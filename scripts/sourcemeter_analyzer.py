@@ -25,15 +25,22 @@ SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runUDM=false"
 
 
-SOURCEMETER_PYTHON_PARAMS = " -runFaultHunter=false" \
-                     " -runDCF=false" \
-                     " -runMetricHunter=false" \
-                     " -runMET=true" \
-                     " -runUDM=false" \
-                     " -pythonBinary=python3.9" \
-                     " -pythonVersion=3" \
-                     " -runPylint=false" \
-                     " -runLIM2Patterns=false"
+# SOURCEMETER_PYTHON_PARAMS = " -runFaultHunter=false" \
+#                      " -runDCF=false" \
+#                      " -runMetricHunter=false" \
+#                      " -runFaultHunter=false" \
+#                      " -runMET=true" \
+#                      " -runUDM=false" \
+#                      " -pythonBinary=python3.7" \
+#                      " -pythonVersion=3" \
+#                      " -runPylint=false" \
+#                      " -runLIM2Patterns=false" \
+#                      " -runSQ=false"
+
+
+SOURCEMETER_PYTHON_PARAMS = " -pythonBinary=python3.7" \
+                     " -pythonVersion=3"
+
 
 SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
                      " -platform=AnyCPU" \
@@ -113,7 +120,7 @@ def get_language_command(project_name, project_dir, project_release, lang):
     return command
 
 def get_java_command(project_name, project_dir, project_release):
-     command = f"{SOURCEMETER_PATH}/Java/SourceMeterJava " \
+     command = f"{SOURCEMETER_PATH}/Java/AnalyzerJava " \
               + f"-resultsDir={PROJECTS_DIR}/../Results/Java " \
               + f"-projectName={project_name} " \
               + f"-currentDate={project_release} " \
@@ -144,6 +151,9 @@ def analyze_projects(lang):
             cloned_repo_tag_ref = cloned_repo.tags[rel.tag_name].commit
             cloned_repo.git.checkout(cloned_repo_tag_ref, force=True)
             repo_dir = cloned_repo.working_dir
+
+            add_init_files(repo_dir)
+
             try:
                 execute_sourcemeter(repo_name.split("/")[1],repo_dir,rel.tag_name, lang)
             except Exception as e:
@@ -158,6 +168,23 @@ def parse_repo_names_lang(lang):
     if lang == 'python':
         repo_names = parse_repo_names(PYTHON_PROJECTS_LIST_FILE)
     return repo_names
+
+
+def add_init_files(root_path: str):
+    for current_path, dirs, files in os.walk(root_path):
+
+        has_py_files = any(
+            f.endswith(".py") and f != "__init__.py"
+            for f in files
+        )
+
+        if has_py_files:
+            init_path = os.path.join(current_path, "__init__.py")
+
+            if not os.path.exists(init_path):
+                with open(init_path, "w", encoding="utf-8"):
+                    pass
+                print(f"Created: {init_path}")
 
 
 if __name__ == '__main__':

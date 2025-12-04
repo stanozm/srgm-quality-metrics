@@ -1,29 +1,69 @@
 import os
 import shutil
+import pandas as pd
 
 
 
 
 # Target folder containing folders with CSV files
-SOURCE_MAIN_FOLDER = '/u/23/chrens1/unix/SourceMeter/ESEM/Results/Python/'
-NEW_MAIN_FOLDER ='/u/23/chrens1/unix/SourceMeter/ESEM/FilteredResults/Python'
+SOURCE_MAIN_FOLDER = '/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/Python/'
+NEW_MAIN_FOLDER ='/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Python'
 
-RESTRICTED_FOLDERS = ['sourcemeter','asg', 'graph', 'log', 'temp']
+RESTRICTED_FOLDERS = ['sourcemeter','asg', 'graph', 'log', 'temp', 'analyzer']
+
+# def copy_csv_files(new_folder_path):
+#     for root, dirs, files in os.walk(SOURCE_MAIN_FOLDER):
+#
+#         new_dir = os.path.join(new_folder_path, os.path.relpath(root, SOURCE_MAIN_FOLDER))
+#
+#         if not check_restricted_folder(new_dir):
+#             os.makedirs(new_dir, exist_ok=True)
+#
+#             for file in files:
+#                 if (file.endswith('.csv')
+#                         and "-CloneClass" not in file)\
+#                         and "-CloneInstance" not in file\
+#                         and "-Attribute" not in file\
+#                         and "-Folder" not in file\
+#                         and "-Module" not in file\
+#                         and "-Component" not in file:
+#                     src_file = os.path.join(root, file)
+#                     dst_file = os.path.join(new_dir, file)
+#                     #print('Will copy: '+ src_file)
+#                     #print('To: '+ dst_file)
+#                     shutil.copy(src_file, dst_file)
 
 def copy_csv_files(new_folder_path):
     for root, dirs, files in os.walk(SOURCE_MAIN_FOLDER):
 
-        new_dir = os.path.join(new_folder_path, os.path.relpath(root, SOURCE_MAIN_FOLDER))
+        rel_path = os.path.relpath(root, SOURCE_MAIN_FOLDER)
+
+        parts = rel_path.split(os.sep)
+
+        if "python" in parts:
+            python_index = parts.index("python")
+            parts.pop(python_index)
+
+
+        cleaned_rel_path = os.sep.join(parts)
+
+        new_dir = os.path.join(new_folder_path, cleaned_rel_path)
+
 
         if not check_restricted_folder(new_dir):
             os.makedirs(new_dir, exist_ok=True)
 
             for file in files:
-                if file.endswith('.csv'):
+                if (file.endswith('.csv')
+                        and "-CloneClass" not in file
+                        and "-CloneInstance" not in file
+                        and "-Attribute" not in file
+                        and "-Folder" not in file
+                        and "-Module" not in file
+                        and "-Component" not in file):
+
                     src_file = os.path.join(root, file)
                     dst_file = os.path.join(new_dir, file)
-                    #print('Will copy: '+ src_file)
-                    #print('To: '+ dst_file)
                     shutil.copy(src_file, dst_file)
 
 def check_restricted_folder(folder_to_check):
@@ -39,5 +79,86 @@ def list_project_dirs(target_folder):
             folder_list.append(directory)
     return folder_list
 
+
+
+
+
+def generate_summaries(results_folder):
+    METRICS = {"CBO", "DIT", "LCOM5", "LLOC", "LOC", "NLM", "NM", "NOA",
+               "NOC", "NOD", "NOI", "NOP", "NOS", "RFC", "WMC",
+               "McCC", "NUMPAR"}
+
+    print("Generating summaries")
+
+    for project in os.listdir(results_folder):
+        print("Processing ", project)
+        project_path = os.path.join(results_folder, project)
+        if not os.path.isdir(project_path):
+            continue
+
+        project_summary_rows = []
+
+
+        for version in os.listdir(project_path):
+            print("Processing version", f"{project}-{version}")
+            version_path = os.path.join(project_path, version)
+            if not os.path.isdir(version_path):
+                continue
+
+            version_summary_filename = f"{project}-{version}-Summary.csv"
+            version_summary_path = os.path.join(version_path, version_summary_filename)
+
+
+            if not os.path.exists(version_summary_path):
+                summary_data = {}
+
+
+                for fname in os.listdir(version_path):
+                    if not fname.endswith(".csv"):
+                        continue
+
+
+                    if not fname.startswith(project + "-"):
+                        continue
+
+                    parts = fname.split("-")
+                    if len(parts) < 2:
+                        continue
+
+                    TYPE = parts[-1].replace(".csv", "")
+
+                    csv_path = os.path.join(version_path, fname)
+
+
+                    df = pd.read_csv(csv_path)
+
+
+
+                    for col in df.columns:
+                        if col in METRICS:
+                            avg_value = df[col].mean()
+                            summary_data[f"{col}-{TYPE}-Avg"] = avg_value
+
+
+                pd.DataFrame([summary_data]).to_csv(version_summary_path, index=False)
+
+
+            version_df = pd.read_csv(version_summary_path)
+            version_df.insert(0, "Project", f"{project}-{version}")
+            project_summary_rows.append(version_df)
+
+
+        if project_summary_rows:
+            project_summary_df = pd.concat(project_summary_rows, ignore_index=True)
+
+            project_summary_df.sort_values(by="Project", inplace=True)
+
+            project_summary_path = os.path.join(project_path, f"{project}-Summary.csv")
+            project_summary_df.to_csv(project_summary_path, index=False)
+
+    print("All summaries generated successfully.")
+
+
 if __name__ == '__main__':
     copy_csv_files(NEW_MAIN_FOLDER)
+    generate_summaries(NEW_MAIN_FOLDER)

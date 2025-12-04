@@ -1,1 +1,1 @@
-SonarSource/sonar-scanner-maven
+code4craft/webmagic
