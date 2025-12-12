@@ -1,6 +1,7 @@
 import os
 import shutil
 import pandas as pd
+import numpy as np
 
 
 
@@ -135,10 +136,24 @@ def generate_summaries(results_folder):
 
 
                     for col in df.columns:
+                        print("processing column ", col)
                         if col in METRICS:
                             avg_value = df[col].mean()
-                            summary_data[f"{col}-{TYPE}-Avg"] = avg_value
+                            med_value = df[col].median()
+                            std_value = df[col].std()
+                            p95_value = df[col].quantile(0.95)
 
+                            print(f'Values for {col}: {df[col]}')
+                            print(f'Avergage Value: {avg_value}')
+                            print(f'Median Value: {med_value}')
+                            print(f'Standard Deviation: {std_value}')
+                            print(f'P-Value: {p95_value}')
+
+
+                            summary_data[f"{col}-{TYPE}-Avg"] = avg_value
+                            summary_data[f"{col}-{TYPE}-Median"] = med_value
+                            summary_data[f"{col}-{TYPE}-Std"] = std_value
+                            summary_data[f"{col}-{TYPE}-P95"] = p95_value
 
                 pd.DataFrame([summary_data]).to_csv(version_summary_path, index=False)
 
