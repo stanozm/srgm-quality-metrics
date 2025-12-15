@@ -22,16 +22,19 @@ def remove_prefix_from_project(csv_path, prefix_to_remove):
     print(f"Updated CSV saved: {csv_path}")
 
 
-def merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv):
+def merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, duration_csv):
 
     df_strait = pd.read_csv(strait_csv)
     df_sonar = pd.read_csv(sonar_csv)
     df_sourcemeter = pd.read_csv(sourcemeter_csv)
+    df_duration = pd.read_csv(duration_csv)
 
     df_sonar = df_sonar.rename(columns={"project_key": "Project"})
 
-    merged = df_strait.merge(df_sonar, on="Project", how="inner") \
-                      .merge(df_sourcemeter, on="Project", how="inner")
+    merged = (df_strait.merge(df_duration, on="Project", how="inner")
+                       .merge(df_sourcemeter, on="Project", how="inner")
+                       .merge(df_sonar, on="Project", how="inner"))
+
 
     merged.sort_values(by="Project", inplace=True)
 
@@ -48,5 +51,6 @@ if __name__ == "__main__":
     strait_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/STRAIT/STRAIT-httpie-cli-Summary.csv"
     sonar_csv ="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/Sonarqube/sonarqube_metrics.csv"
     sourcemeter_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Python/cli-Summary.csv"
+    duration_csv="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/cli-duration.csv"
 
-    merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv)
+    merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, duration_csv)

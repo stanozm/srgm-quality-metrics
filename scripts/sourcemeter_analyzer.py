@@ -42,33 +42,9 @@ SOURCEMETER_PYTHON_PARAMS = " -pythonBinary=python3.7" \
                      " -pythonVersion=3"
 
 
-SOURCEMETER_CSHARP_PARAMS =" -configuration=Release" \
-                     " -platform=AnyCPU" \
-                     " -runDCF=false" \
-                     " -runMetricHunter=false" \
-                     " -runLIM2Patterns=false" \
-                     " -runUDM=false" \
-                     " -runFxCop=false"
-
-
-
-
-
-
-
-
-
-
 github = Github()
 
 
-def parse_csharp_slns_to_dict(filename):
-    dict = {}
-    with open(filename, mode='r') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            dict[row[0]] = row[1]
-    return dict
 
 
 def parse_repo_names(path_to_repos_file):
@@ -102,6 +78,8 @@ def clone_repo(github_repo):
 def get_repo_releases(github_repo):
     releases = github_repo.get_releases()
     return releases
+
+
 
 def execute_sourcemeter(project_name, project_dir, project_release,lang):
     command = get_language_command(project_name, project_dir, project_release, lang)
