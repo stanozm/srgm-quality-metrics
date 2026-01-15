@@ -34,7 +34,7 @@ RESTRICTED_FOLDERS = ['sourcemeter','asg', 'graph', 'log', 'temp', 'analyzer']
 #                     #print('To: '+ dst_file)
 #                     shutil.copy(src_file, dst_file)
 
-def copy_csv_files(new_folder_path):
+def copy_csv_files():
     for root, dirs, files in os.walk(SOURCE_MAIN_FOLDER):
 
         rel_path = os.path.relpath(root, SOURCE_MAIN_FOLDER)
@@ -48,7 +48,7 @@ def copy_csv_files(new_folder_path):
 
         cleaned_rel_path = os.sep.join(parts)
 
-        new_dir = os.path.join(new_folder_path, cleaned_rel_path)
+        new_dir = os.path.join(NEW_MAIN_FOLDER, cleaned_rel_path)
 
 
         if not check_restricted_folder(new_dir):
@@ -84,16 +84,16 @@ def list_project_dirs(target_folder):
 
 
 
-def generate_summaries(results_folder):
+def generate_summaries():
     METRICS = {"CBO", "DIT", "LCOM5", "LLOC", "LOC", "NLM", "NM", "NOA",
                "NOC", "NOD", "NOI", "NOP", "NOS", "RFC", "WMC",
                "McCC", "NUMPAR"}
 
     print("Generating summaries")
 
-    for project in os.listdir(results_folder):
+    for project in os.listdir(NEW_MAIN_FOLDER):
         print("Processing ", project)
-        project_path = os.path.join(results_folder, project)
+        project_path = os.path.join(NEW_MAIN_FOLDER, project)
         if not os.path.isdir(project_path):
             continue
 
@@ -173,7 +173,13 @@ def generate_summaries(results_folder):
 
     print("All summaries generated successfully.")
 
+def init(projects_dir_path, new_dir_path):
+    global SOURCE_MAIN_FOLDER
+    global NEW_MAIN_FOLDER
+    SOURCE_MAIN_FOLDER = projects_dir_path
+    NEW_MAIN_FOLDER = new_dir_path
+
 
 if __name__ == '__main__':
-    copy_csv_files(NEW_MAIN_FOLDER)
-    generate_summaries(NEW_MAIN_FOLDER)
+    copy_csv_files()
+    generate_summaries()

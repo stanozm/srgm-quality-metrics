@@ -10,7 +10,8 @@ JAVA_PROJECTS_LIST_FILE = 'inputs/projects-java-test.txt'
 PYTHON_PROJECTS_LIST_FILE = 'inputs/projects-python-test.txt'
 
 SOURCEMETER_PATH = "//u/23/chrens1/unix/utility/sourcemeter/SourceMeter-10.2.0-x64-Linux"
-PROJECTS_DIR =  "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/projects"
+# PROJECTS_DIR =  "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/projects"
+PROJECTS_DIR = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/Sourcemeter"
 
 SOURCEMETER_JAVA_PARAMS = " -runFB=false" \
                      " -runAndroidHunter=false" \
@@ -69,9 +70,15 @@ def get_repo(repo_name):
     return repo
 
 def clone_repo(github_repo):
-    repo_dir = f'{PROJECTS_DIR}/{github_repo.name}'
-    cloned_repo = git.Repo.clone_from(github_repo.git_url.replace("git://", "https://"), repo_dir)
-    return cloned_repo
+    repo_dir = f"{PROJECTS_DIR}/{github_repo.name}"
+
+    if os.path.exists(repo_dir):
+        return git.Repo(repo_dir)
+
+    return git.Repo.clone_from(
+        github_repo.git_url.replace("git://", "https://"),
+        repo_dir
+    )
 
 
 
@@ -163,6 +170,11 @@ def add_init_files(root_path: str):
                 with open(init_path, "w", encoding="utf-8"):
                     pass
                 print(f"Created: {init_path}")
+
+def init(projects_dir_path):
+    global PROJECTS_DIR
+    PROJECTS_DIR = projects_dir_path
+
 
 
 if __name__ == '__main__':

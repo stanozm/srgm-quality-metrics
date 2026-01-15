@@ -113,12 +113,16 @@ def get_python_command(project_name, project_dir, project_release):
   -Dsonar.projectKey={project_name}-{project_release} \
   -Dsonar.projectBaseDir={project_dir} \
   -Dsonar.sources=. \
+  -Dsonar.javascript.node.maxspace=8192 \
+  -Dsonar.exclusions=**/*.html \
   -Dsonar.host.url={SONAR_URL} \
   -Dsonar.login={SONAR_TOKEN}'
     return command
 
 
-
+def init(projects_dir_path):
+    global PROJECTS_DIR
+    PROJECTS_DIR = projects_dir_path
 
 
 

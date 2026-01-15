@@ -17,13 +17,20 @@ SONAR_URL = 'http://localhost:9000'
 
 
 def get_all_metrics() -> list:
+
+    excluded_metrics = ["ncloc_language_distribution"]
+
     headers = {"Authorization": f"Bearer {SONAR_TOKEN}"}
     url = f"{SONAR_URL}/api/metrics/search"
 
     resp = requests.get(url, headers=headers)
     resp.raise_for_status()
 
-    metrics = [m["key"] for m in resp.json().get("metrics", [])]
+    metrics = [
+        m["key"]
+        for m in resp.json().get("metrics", [])
+        if m["key"] not in excluded_metrics
+    ]
     return metrics
 
 
@@ -92,7 +99,11 @@ def export_all_project_metrics():
             **metric_values
         })
 
-    return results
+    pd.DataFrame(results).to_csv(f"{PROJECTS_DIR}/sonarqube_metrics.csv", index=False)
+
+def init(projects_dir_path):
+    global PROJECTS_DIR
+    PROJECTS_DIR = projects_dir_path
 
 if __name__ == '__main__':
     # metrics = get_all_metrics()
@@ -105,8 +116,8 @@ if __name__ == '__main__':
     # r = requests.get("http://localhost:9000/api/projects/search", headers=headers)
     # print(r.json())
 
-    results =  export_all_project_metrics()
-    pd.DataFrame(results).to_csv(f"{PROJECTS_DIR }/sonarqube_metrics.csv", index=False)
+    export_all_project_metrics()
+    # pd.DataFrame(results).to_csv(f"{PROJECTS_DIR }/sonarqube_metrics.csv", index=False)
 
 
 

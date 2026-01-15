@@ -5,7 +5,7 @@ import pandas as pd
 
 PROJECTS_DIR =  "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/STRAIT"
 
-def create_strait_summaries(PROJECTS_DIR):
+def create_strait_summaries():
 
     pattern = re.compile(r"batchAnalysisReport-(\d+)-(.+)\.csv$")
 
@@ -57,5 +57,9 @@ def create_strait_summaries(PROJECTS_DIR):
 
         print(f"Created: {output_path}")
 
+def init(projects_dir_path):
+    global PROJECTS_DIR
+    PROJECTS_DIR = projects_dir_path
+
 if __name__ == '__main__':
-    create_strait_summaries(PROJECTS_DIR)
+    create_strait_summaries()

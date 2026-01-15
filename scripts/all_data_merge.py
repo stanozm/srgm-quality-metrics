@@ -22,7 +22,7 @@ def remove_prefix_from_project(csv_path, prefix_to_remove):
     print(f"Updated CSV saved: {csv_path}")
 
 
-def merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, duration_csv):
+def merge_strait_sonar_sourcemeter(output_dir, strait_csv, sonar_csv, sourcemeter_csv, duration_csv):
 
     df_strait = pd.read_csv(strait_csv)
     df_sonar = pd.read_csv(sonar_csv)
@@ -38,7 +38,7 @@ def merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, durat
 
     merged.sort_values(by="Project", inplace=True)
 
-    output_dir = os.path.dirname(os.path.abspath(strait_csv))
+    output_dir = os.path.dirname(os.path.abspath(output_dir))
     output_file = os.path.join(output_dir, "merged_strait_sonar_sourcemeter.csv")
 
     merged.to_csv(output_file, index=False)
@@ -47,10 +47,10 @@ def merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, durat
     return output_file
 
 
-if __name__ == "__main__":
-    strait_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/STRAIT/STRAIT-httpie-cli-Summary.csv"
-    sonar_csv ="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/Sonarqube/sonarqube_metrics.csv"
-    sourcemeter_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Python/cli-Summary.csv"
-    duration_csv="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/cli-duration.csv"
-
-    merge_strait_sonar_sourcemeter(strait_csv, sonar_csv, sourcemeter_csv, duration_csv)
+# if __name__ == "__main__":
+#     # strait_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/STRAIT/STRAIT-httpie-cli-Summary.csv"
+#     # sonar_csv ="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/Sonarqube/sonarqube_metrics.csv"
+#     # sourcemeter_csv = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Python/cli-Summary.csv"
+#     # duration_csv="/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/cli-duration.csv"
+#
+#     # merge_strait_sonar_sourcemeter(output_dir, strait_csv, sonar_csv, sourcemeter_csv, duration_csv)
