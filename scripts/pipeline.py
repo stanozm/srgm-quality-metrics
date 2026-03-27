@@ -7,9 +7,9 @@ import github_repo_miner as repo_miner
 import all_data_merge as merger
 
 
-PROJECT_NAME = "Significant-Gravitas/AutoGPT"
+PROJECT_NAME = "yunaiv/ruoyi-vue-pro"
 REPO_NAME = PROJECT_NAME.split("/")[-1]
-PROJECTS_DIR = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/AutoGPT/"
+PROJECTS_DIR = "/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/EASE2026/Data/ruoyi-vue-pro/"
 
 
 SOURCEMETER_PROJECTS_DIR = f"{PROJECTS_DIR}/Sourcemeter"
@@ -25,18 +25,18 @@ DURATION_DATA_DIR = f"{PROJECTS_DIR}/Duration"
 if __name__ == '__main__':
     print("STAGE 1a: Executing sourcemeter analysis")
     sm_analyzer.init(SOURCEMETER_PROJECTS_DIR)
-    sm_analyzer.analyze_projects("python")
+    sm_analyzer.analyze_projects("java")
     print("--------------------------------------------------------------------")
 
     print("STAGE 1b: Copying sourcemeter results")
-    csmr.init(F"{PROJECTS_DIR}/Results/Python", f'{PROJECTS_DIR}/FilteredResults/')
+    csmr.init(F"{PROJECTS_DIR}/Results/Java", f'{PROJECTS_DIR}/FilteredResults/')
     csmr.copy_csv_files()
     csmr.generate_summaries()
     print("--------------------------------------------------------------------")
 
     print("STAGE 2a: Executing Sonarqube analysis")
     sonar_analyzer.init(SONARQUBE_PROJECTS_DIR)
-    sonar_analyzer.analyze_projects("python")
+    sonar_analyzer.analyze_projects("java")
     print("--------------------------------------------------------------------")
 
     print("STAGE 2b: Exporting Sonarqube results")

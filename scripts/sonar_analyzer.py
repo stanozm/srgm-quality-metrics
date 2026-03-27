@@ -98,12 +98,21 @@ def get_language_command(project_name, project_dir, project_release, lang):
 def get_java_command(project_name, project_dir, project_release):
 
 
-    command = f'mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey={project_name}-{project_release} \
-                    -Dsonar.projectBaseDir={project_dir} \
-                    -Dsonar.projectName={project_name}-{project_release} \
-                    -Dsonar.host.url={SONAR_URL} \
-                    -Dsonar.login={SONAR_TOKEN}'
+    # command = f'mvn clean verify sonar:sonar \
+    #                 -Dsonar.projectKey={project_name}-{project_release} \
+    #                 -Dsonar.projectBaseDir={project_dir} \
+    #                 -Dsonar.projectName={project_name}-{project_release} \
+    #                 -Dsonar.host.url={SONAR_URL} \
+    #                 -Dsonar.login={SONAR_TOKEN}'
+    #
+    # return command
+
+    command = f'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                     -Dsonar.projectKey={project_name}-{project_release} \
+                     -Dsonar.projectBaseDir={project_dir} \
+                     -Dsonar.projectName={project_name}-{project_release} \
+                     -Dsonar.host.url={SONAR_URL} \
+                     -Dsonar.token={SONAR_TOKEN} '
 
     return command
 

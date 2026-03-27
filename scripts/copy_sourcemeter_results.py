@@ -7,8 +7,8 @@ import numpy as np
 
 
 # Target folder containing folders with CSV files
-SOURCE_MAIN_FOLDER = '/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/Python/'
-NEW_MAIN_FOLDER ='/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Python'
+SOURCE_MAIN_FOLDER = '/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/Java/'
+NEW_MAIN_FOLDER ='/u/23/chrens1/unix/Ja/Aalto/papers/SRGM-maturity/Results/FilteredResults/Java'
 
 RESTRICTED_FOLDERS = ['sourcemeter','asg', 'graph', 'log', 'temp', 'analyzer']
 
@@ -41,8 +41,8 @@ def copy_csv_files():
 
         parts = rel_path.split(os.sep)
 
-        if "python" in parts:
-            python_index = parts.index("python")
+        if "java" in parts:
+            python_index = parts.index("java")
             parts.pop(python_index)
 
 
